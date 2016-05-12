@@ -25,7 +25,6 @@ const Items = React.createClass(new function Items() {
         let name = this.state.name;
         let templateItem = { name: name, desc: 'No description yet' };
         let x;
-        let y;
         if (!!name) this.props.createItem(templateItem);
     }
     
