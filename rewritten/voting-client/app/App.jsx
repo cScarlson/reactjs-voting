@@ -8,18 +8,26 @@ import io from 'socket.io-client';
 import { List, Set, Map } from 'immutable';
 //
 import { setState } from './action_creators';
+import eventhub from './eventhub';
 import reducer from './reducer';
 import remoteActionMiddleware from './remote_action_middleware';
 import ItemsContainer from './components/items/ItemsContainer';
 import Item from './components/items/components/item/Item';
 
-class Application extends React.Component {
+const Application = React.createClass(new function Application() {
+    var thus = eventhub.installTo(this);
     
-    constructor () {
-        super();
+    function componentDidMount() {
+        this.on('trigger:focus', function app(e, data) {
+            console.log('@App#componentDidMount#trigger:focus#data', data);
+        });
     }
     
-    render () {
+    function componentWillUnmount() {
+        this.off('trigger:focus', this);
+    }
+    
+    function render () {
         
         return (
             <div>
@@ -32,7 +40,13 @@ class Application extends React.Component {
         );
     }
     
-}
+    // export precepts
+    this.componentDidMount = componentDidMount;
+    this.render = render;
+    this.componentWillUnmount = componentWillUnmount;
+    
+    return this;
+});
 
 let socket = {
     emit: (channel, data) => console.log('#emit', channel, data)

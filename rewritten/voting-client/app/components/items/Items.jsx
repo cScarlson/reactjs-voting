@@ -9,20 +9,6 @@ const Items = React.createClass(new function Items() {
     var thus = eventhub.installTo(this);
     var mixins = [PureRenderMixin];
     
-    function componentDidMount() {
-        this.on('test', function items(e, data) {
-            console.log('@Items#componentDidMount#test#data', data);
-            this.setState({ name: 'That Name-State' });
-        });
-    }
-    
-    function componentWillUnmount() {
-        this.off('test', this);
-    }
-    
-    this.componentDidMount = componentDidMount;
-    this.componentWillUnmount = componentWillUnmount;
-    
     function getInitialState() {
         return {
             name: ''
@@ -45,13 +31,19 @@ const Items = React.createClass(new function Items() {
     
     function handleSubmit(e) {
         e.preventDefault();
-        console.log('????', this);
         this.createItem();
+    }
+    
+    function componentDidMount() {
+        this.fire('trigger:focus', this);
+    }
+    
+    function componentWillUnmount() {
+        this.off('test', this);
     }
     
     function render() {
         let items = this.props.items.map(item => (<Item key={item.name} { ...item } />));
-        let has = !!items.length
         
         return (
             <form onSubmit={handleSubmit.bind(this)}>
@@ -68,7 +60,9 @@ const Items = React.createClass(new function Items() {
     this.updateName = updateName;
     this.createItem = createItem;
     this.handleSubmit = handleSubmit;
+    this.componentDidMount = componentDidMount;
     this.render = render;
+    this.componentWillUnmount = componentWillUnmount;
     
     return this;
 });
