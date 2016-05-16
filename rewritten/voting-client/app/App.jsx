@@ -24,7 +24,7 @@ class Application extends React.Component {
         return (
             <div>
                 <h1>Welcome!</h1>
-                <Link to={'/items'}>Items</Link>
+                <Link to={'/'}>Home</Link> | <Link to={'/items'}>Items</Link>
                 <br />
                 <br />
                 {this.props.children}

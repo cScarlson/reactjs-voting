@@ -1,13 +1,27 @@
 
 import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import { connect } from 'react-redux';
 //
+import eventhub from '../../eventhub';
 import Item from './components/item/Item';
 
 const Items = React.createClass(new function Items() {
-    var thus = this;
+    var thus = eventhub.installTo(this);
     var mixins = [PureRenderMixin];
+    
+    function componentDidMount() {
+        this.on('test', function items(e, data) {
+            console.log('@Items#componentDidMount#test#data', data);
+            this.setState({ name: 'That Name-State' });
+        });
+    }
+    
+    function componentWillUnmount() {
+        this.off('test', this);
+    }
+    
+    this.componentDidMount = componentDidMount;
+    this.componentWillUnmount = componentWillUnmount;
     
     function getInitialState() {
         return {
@@ -24,8 +38,15 @@ const Items = React.createClass(new function Items() {
     function createItem() {
         let name = this.state.name;
         let templateItem = { name: name, desc: 'No description yet' };
-        let x;
         if (!!name) this.props.createItem(templateItem);
+        this.setState({ name: '' });
+        this.fire('test', 'datum');
+    }
+    
+    function handleSubmit(e) {
+        e.preventDefault();
+        console.log('????', this);
+        this.createItem();
     }
     
     function render() {
@@ -33,11 +54,11 @@ const Items = React.createClass(new function Items() {
         let has = !!items.length
         
         return (
-            <div>
+            <form onSubmit={handleSubmit.bind(this)}>
                 {items}
                 <input type="text" onChange={this.updateName} value={this.state.name} placeholder="Unnamed" />
-                <button onClick={() => this.createItem()}>Create</button>
-            </div>
+                <button>Create</button>
+            </form>
         );
     }
     
@@ -46,6 +67,7 @@ const Items = React.createClass(new function Items() {
     this.getInitialState = getInitialState;
     this.updateName = updateName;
     this.createItem = createItem;
+    this.handleSubmit = handleSubmit;
     this.render = render;
     
     return this;
