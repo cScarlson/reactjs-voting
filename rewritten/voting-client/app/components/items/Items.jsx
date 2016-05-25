@@ -34,7 +34,8 @@ const Items = React.createClass(new function Items() {
         this.createItem();
     }
     
-    function componentDidMount() {
+    function componentWillMount() {
+        (arguments, this.props, this.state, this);
         this.fire('trigger:focus', this);
     }
     
@@ -60,7 +61,7 @@ const Items = React.createClass(new function Items() {
     this.updateName = updateName;
     this.createItem = createItem;
     this.handleSubmit = handleSubmit;
-    this.componentDidMount = componentDidMount;
+    this.componentWillMount = componentWillMount;
     this.render = render;
     this.componentWillUnmount = componentWillUnmount;
     

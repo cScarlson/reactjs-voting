@@ -17,9 +17,10 @@ import Item from './components/items/components/item/Item';
 const Application = React.createClass(new function Application() {
     var thus = eventhub.installTo(this);
     
-    function componentDidMount() {
+    function componentWillMount() {
+        (arguments, this.props, this.state, this);
         this.on('trigger:focus', function app(e, data) {
-            console.log('@App#componentDidMount#trigger:focus#data', data);
+            console.log('@App#componentWillMount#trigger:focus#data', data);
         });
     }
     
@@ -41,7 +42,7 @@ const Application = React.createClass(new function Application() {
     }
     
     // export precepts
-    this.componentDidMount = componentDidMount;
+    this.componentWillMount = componentWillMount;
     this.render = render;
     this.componentWillUnmount = componentWillUnmount;
     
