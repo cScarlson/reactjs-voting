@@ -3,17 +3,12 @@ import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 //
 import eventhub from '../../eventhub';
+import FocusOn from '../FocusOn/FocusOn';
 import Item from './components/item/Item';
 
 const Items = React.createClass(new function Items() {
     var thus = eventhub.installTo(this);
     var mixins = [PureRenderMixin];
-    
-    function getInitialState() {
-        return {
-            name: ''
-        };
-    }
     
     function updateName(e) {
         var name = e.target.value;
@@ -34,9 +29,21 @@ const Items = React.createClass(new function Items() {
         this.createItem();
     }
     
+    function getInitialState() {
+        return {
+            name: ''
+        };
+    }
+    
     function componentWillMount() {
         (arguments, this.props, this.state, this);
         this.fire('trigger:focus', this);
+        this.hub.fire('trigger:focus', this);
+        eventhub.fire('trigger:focus', this);
+    }
+    
+    function componentDidMount() {
+        this.fire('trigger:custom:focus');
     }
     
     function componentWillUnmount() {
@@ -49,7 +56,9 @@ const Items = React.createClass(new function Items() {
         return (
             <form onSubmit={handleSubmit.bind(this)}>
                 {items}
-                <input type="text" onChange={this.updateName} value={this.state.name} placeholder="Unnamed" />
+                <FocusOn channel="trigger:custom:focus">
+                    <input type="text" onChange={this.updateName} value={this.state.name} placeholder="Unnamed" />
+                </FocusOn>
                 <button>Create</button>
             </form>
         );
@@ -57,11 +66,13 @@ const Items = React.createClass(new function Items() {
     
     // export precepts
     this.mixins = mixins;
-    this.getInitialState = getInitialState;
+    this.hub = eventhub.installTo({});
     this.updateName = updateName;
     this.createItem = createItem;
     this.handleSubmit = handleSubmit;
+    this.getInitialState = getInitialState;
     this.componentWillMount = componentWillMount;
+    this.componentDidMount = componentDidMount;
     this.render = render;
     this.componentWillUnmount = componentWillUnmount;
     
